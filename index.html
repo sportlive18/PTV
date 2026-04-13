@@ -1,438 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>PTV LIVE - Sportlink</title>
-  
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hotstar</title>
+<meta name="referrer" content="no-referrer">
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css"/>
+
+    
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7VPXZYQPN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L7VPXZYQPN');
+</script>
   <style>
-    :root {
-      --bg-dark: #070b12;
-      --bg-card: #0d1420;
-      --bg-card2: #111826;
-      --blue-main: #00aaff;
-      --blue-bright: #33bbff;
-      --blue-glow: rgba(0, 170, 255, 0.35);
-      --blue-dim: rgba(0, 170, 255, 0.08);
-      --cyan: #00e5ff;
-      --text-white: #e8f0fe;
-      --text-gray: #6b7fa3;
-      --border-color: rgba(0, 170, 255, 0.12);
-      --border-bright: rgba(0, 170, 255, 0.3);
-      --accent-red: #ff3d5a;
-      --tg-blue: #0088cc;
-      --tg-blue-bright: #29a8e0;
-    }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
 
-    * { 
-      box-sizing: border-box; 
-      -webkit-tap-highlight-color: transparent; 
-      outline: none; 
-      user-select: none; 
-      -webkit-touch-callout: none;
-      -webkit-text-size-adjust: 100%;
-    }
+.shaka-video-container{
+position:fixed;
+inset:0;
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+video{
+width:100%;
+height:100%;
+object-fit:contain;
+background:#000;
+}
+
+.custom-watermark{
+position:absolute;
+z-index:40;
+pointer-events:none;
+top:65%;
+left:6%;
+transform:translateY(-50%);
+font-size:11px;
+font-weight:600;
+color:rgba(255,255,255,0.12);
+}
+
+/* --- Updated Modern Blocker Styles --- */
+.block-overlay{
+position:fixed;
+inset:0;
+z-index:99999;
+display:flex;
+align-items:center;
+justify-content:center;
+background:radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+text-align:center;
+}
+
+.block-box{
+padding:40px;
+max-width:500px;
+width:90%;
+background:rgba(20, 20, 20, 0.95);
+border-radius:16px;
+border:1px solid rgba(255, 255, 255, 0.1);
+box-shadow:0 20px 50px rgba(0,0,0,0.5);
+animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateY(30px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.block-title{
+font-size:42px;
+font-weight:800;
+color:#ffffff;
+text-transform:uppercase;
+letter-spacing:2px;
+margin-bottom:20px;
+text-shadow:0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.block-sub{
+font-size:14px;
+font-weight:500;
+color:rgba(255, 255, 255, 0.6);
+line-height:1.6;
+}
+
+/* Icon hidden as requested, but keeping structure if needed later */
+.block-icon{ display: none; }
+.block-note{ display: none; }
+
+@media(max-width:700px){
+.custom-watermark{font-size:9px;top:60%;left:16%}
+.block-title{font-size:28px}
+.block-box{padding:25px}
+.block-sub{font-size:12px}
+}
+</style>
     
-    body {
-      margin: 0; padding: 0;
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,120,255,0.15) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 30% at 100% 80%, rgba(0,200,255,0.06) 0%, transparent 60%);
-      font-family: 'Exo 2', sans-serif;
-      color: var(--text-white);
-      padding-bottom: 80px;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
-
-    body::-webkit-scrollbar { width: 5px; }
-    body::-webkit-scrollbar-track { background: var(--bg-dark); }
-    body::-webkit-scrollbar-thumb { background: #1a2a40; border-radius: 10px; }
-
-    /* HEADER */
-    header {
-      position: fixed; top: 0; width: 100%; height: 58px;
-      background: rgba(7, 11, 18, 0.97);
-      backdrop-filter: blur(30px);
-      border-bottom: 1px solid var(--border-color);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 16px;
-      z-index: 1000;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.7), 0 1px 0 rgba(0,170,255,0.08);
-    }
-
-    .menu-icon { 
-      font-size: 24px; color: var(--text-gray); cursor: pointer; 
-      transition: 0.2s; padding: 6px; border-radius: 8px;
-    }
-    .menu-icon:active { color: var(--blue-main); background: var(--blue-dim); }
-    
-    .logo-container { 
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .logo-text { 
-      font-family: 'Bebas Neue'; font-size: 22px;
-      letter-spacing: 3px; line-height: 1;
-      background: linear-gradient(135deg, #ffffff 30%, var(--blue-bright));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .logo-sub {
-      font-size: 8px; font-weight: 800; color: var(--blue-main);
-      letter-spacing: 4px; text-transform: uppercase; margin-top: 1px;
-      opacity: 0.85;
-    }
-
-    .header-live {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(255, 61, 90, 0.1);
-      border: 1px solid rgba(255, 61, 90, 0.3);
-      padding: 4px 10px; border-radius: 20px;
-    }
-    .h-dot { 
-      width: 7px; height: 7px; background: var(--accent-red); border-radius: 50%; 
-      box-shadow: 0 0 8px var(--accent-red);
-      animation: blink 1.2s infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.8)} }
-    .h-text { 
-      font-size: 10px; font-weight: 800; color: var(--accent-red); 
-      letter-spacing: 1.5px; text-transform: uppercase; 
-    }
-
-    /* VIDEO */
-    .video-wrapper {
-      margin-top: 58px;
-      width: 100%; position: relative;
-      background: #000;
-      box-shadow: 0 0 60px rgba(0,100,255,0.12);
-      overflow: hidden;
-    }
-    .video-container {
-      width: 100%; aspect-ratio: 16/9;
-      position: relative; overflow: hidden; background: #000;
-    }
-    .video-container iframe { width: 100%; height: 100%; border: none; display: block; }
-    .video-bar { 
-      height: 2px; width: 100%; 
-      background: linear-gradient(90deg, transparent, var(--blue-main), var(--cyan), var(--blue-main), transparent);
-      box-shadow: 0 0 16px var(--blue-glow);
-    }
-
-    /* TICKER */
-    .ticker-wrap {
-      background: var(--bg-card); height: 33px; overflow: hidden;
-      display: flex; align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      position: relative; padding: 0 10px;
-    }
-    .ticker-wrap::before { 
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 30px; z-index: 2;
-      background: linear-gradient(90deg, var(--bg-card), transparent);
-    }
-    .ticker-wrap::after { 
-      content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 30px; z-index: 2;
-      background: linear-gradient(-90deg, var(--bg-card), transparent);
-    }
-    .ticker-label {
-      font-size: 9px; font-weight: 800; color: var(--blue-main);
-      background: var(--blue-dim); border: 1px solid var(--border-bright);
-      padding: 2px 7px; border-radius: 4px; white-space: nowrap;
-      letter-spacing: 1px; text-transform: uppercase; margin-right: 10px; z-index: 3;
-    }
-    .ticker-text {
-      color: #6a8bad; font-weight: 500; font-size: 11px;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      white-space: nowrap; animation: scroll 22s linear infinite;
-      padding-left: 100%;
-    }
-    @keyframes scroll { 100% { transform: translateX(-100%); } }
-
-    /* ACTIONS */
-    .action-section { 
-      padding: 18px 14px 10px;
-      max-width: 560px; margin: 0 auto;
-      position: relative; z-index: 1;
-    }
-
-    /* STATS ROW */
-    .stats-row { display: flex; gap: 10px; margin-bottom: 16px; }
-    .stat-card {
-      flex: 1; background: var(--bg-card);
-      border: 1px solid var(--border-color); border-radius: 12px;
-      padding: 12px 14px; display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
-      position: relative; overflow: hidden;
-    }
-    .stat-card::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--blue-main), transparent);
-      opacity: 0.4;
-    }
-    .stat-icon { 
-      width: 32px; height: 32px; border-radius: 8px;
-      background: var(--blue-dim); border: 1px solid var(--border-bright);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .stat-icon i { font-size: 16px; color: var(--blue-main); }
-    .stat-label { font-size: 9px; font-weight: 700; color: var(--text-gray); letter-spacing: 1px; text-transform: uppercase; }
-    .stat-value { font-family: 'Bebas Neue'; font-size: 22px; color: #fff; letter-spacing: 1px; line-height: 1.1; }
-
-    /* TELEGRAM HERO BUTTON */
-    .tg-btn {
-      display: flex; align-items: center;
-      margin-bottom: 12px; border-radius: 16px;
-      text-decoration: none;
-      background: linear-gradient(135deg, #005f99 0%, #0088cc 45%, #29a8e0 100%);
-      box-shadow: 
-        0 8px 32px rgba(0, 136, 204, 0.5),
-        0 2px 8px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        inset 0 -1px 0 rgba(0,0,0,0.2);
-      transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s;
-      position: relative; overflow: hidden;
-    }
-    /* Animated shine */
-    .tg-btn::before {
-      content: '';
-      position: absolute; top: 0; left: -80%; width: 60%; height: 100%;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.13) 50%, transparent 70%);
-      animation: sheen 3s ease-in-out infinite;
-    }
-    @keyframes sheen { 0%,100%{left:-80%} 55%{left:130%} }
-    .tg-btn:active { 
-      transform: scale(0.97); 
-      box-shadow: 0 3px 14px rgba(0,136,204,0.3), 0 1px 3px rgba(0,0,0,0.4);
-    }
-    .tg-icon-wrap {
-      width: 66px; height: 66px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      border-right: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.12);
-    }
-    .tg-icon-wrap svg { width: 32px; height: 32px; fill: #fff; drop-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-    .tg-body { flex: 1; padding: 0 14px; }
-    .tg-title { 
-      font-family: 'Bebas Neue'; font-size: 21px; color: #fff; 
-      letter-spacing: 1.5px; line-height: 1;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.3);
-    }
-    .tg-sub { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px; }
-    .tg-badge {
-      margin-right: 14px; flex-shrink: 0;
-      background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 8px; padding: 5px 10px;
-      font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.8);
-      letter-spacing: 1px; text-transform: uppercase; text-align: center; line-height: 1;
-    }
-    .tg-badge b { display: block; font-family: 'Bebas Neue'; font-size: 17px; color: #fff; letter-spacing: 1px; margin-bottom: 1px; }
-
-    /* SECONDARY GRID */
-    .btn-secondary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .btn-sec {
-      background: var(--bg-card2);
-      border: 1px solid var(--border-color); padding: 13px 10px; border-radius: 12px;
-      text-decoration: none;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: background 0.15s, transform 0.12s, border-color 0.15s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
-    }
-    .btn-sec:active { 
-      background: rgba(0,170,255,0.06); transform: translateY(1px);
-      border-color: var(--border-bright);
-    }
-    .btn-sec i { font-size: 17px; color: var(--blue-main); }
-    .btn-sec span { font-size: 11px; color: #8fa8c5; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
-
-    /* SIDEBAR */
-    .sidebar {
-      position: fixed; left: -100%; top: 0; width: 268px; height: 100%;
-      background: linear-gradient(160deg, #0c1524 0%, #060a12 100%);
-      z-index: 5000; transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-      border-right: 1px solid var(--border-color);
-      box-shadow: 10px 0 40px rgba(0,0,0,0.9);
-    }
-    .sidebar.open { left: 0; }
-    .sb-header { 
-      padding: 28px 22px 22px; border-bottom: 1px solid var(--border-color); 
-      background: rgba(0,170,255,0.03);
-    }
-    .sb-logo { 
-      font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 3px;
-      background: linear-gradient(135deg, #fff 40%, var(--blue-bright));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .sb-sublogo { font-size: 10px; color: var(--blue-main); letter-spacing: 3px; text-transform: uppercase; font-weight: 700; margin-top: 2px; opacity: 0.75; }
-    .sb-link {
-      display: flex; align-items: center; gap: 14px; padding: 16px 22px;
-      color: #6a88ab; text-decoration: none; font-size: 12px; font-weight: 700;
-      transition: 0.15s; border-bottom: 1px solid rgba(255,255,255,0.03);
-      text-transform: uppercase; letter-spacing: 1px;
-    }
-    .sb-link:active { background: rgba(0,170,255,0.06); color: var(--blue-bright); }
-    .sb-link i { font-size: 18px; color: #2d4560; transition: 0.15s; }
-    .sb-link:active i { color: var(--blue-main); }
-    .sb-link.tg-side { background: rgba(0,136,204,0.07); color: var(--tg-blue-bright); border-bottom-color: rgba(0,136,204,0.1); }
-    .sb-link.tg-side i { color: var(--tg-blue-bright); }
-
-    .overlay { 
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4999; 
-      opacity: 0; pointer-events: none; transition: 0.3s;
-      backdrop-filter: blur(5px);
-    }
-    .overlay.active { opacity: 1; pointer-events: auto; }
-
-    @media (min-width: 768px) {
-      header { height: 64px; padding: 0 28px; }
-      .logo-text { font-size: 26px; }
-      .video-wrapper { margin-top: 64px; }
-      .action-section { padding: 26px 20px; }
-      .tg-icon-wrap { width: 72px; height: 72px; }
-      .tg-title { font-size: 23px; }
-      .stat-value { font-size: 26px; }
-    }
-  </style>
 </head>
+    
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="menu-icon material-icons" onclick="toggleMenu()">menu</div>
-    <div class="logo-container">
-      <div class="logo-text">PTV LIVE</div>
-      <div class="logo-sub">by Sportlink</div>
-    </div>
-    <div class="header-live">
-      <div class="h-dot"></div>
-      <span class="h-text">Live</span>
-    </div>
-  </header>
+<div class="shaka-video-container" id="player-container">
+<video id="video" autoplay muted playsinline preload="metadata"></video>
+<div class="custom-watermark"> </div>
+</div>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar" id="sidebar">
-    <div class="sb-header">
-      <div class="sb-logo">PTV LIVE</div>
-      <div class="sb-sublogo">by Sportlink</div>
-    </div>
-    <a href="https://t.me/TestCricket18" class="sb-link tg-side">
-      <i class="material-icons">send</i> Join Telegram
-    </a>
-    <a href="javascript:location.reload()" class="sb-link">
-      <i class="material-icons">refresh</i> Refresh
-    </a>
-    <a href="javascript:sharePage()" class="sb-link">
-      <i class="material-icons">share</i> Share App
-    </a>
-  </div>
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-  <!-- VIDEO -->
-  <div class="video-wrapper">
-    <div class="video-container">
-      <iframe src="https://cricket-yoddha-channel-6.vercel.app/" allowfullscreen allow="autoplay; encrypted-media" scrolling="no"></iframe>
-    </div>
-    <div class="video-bar"></div>
-  </div>
-
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <span class="ticker-label">LIVE</span>
-    <div class="ticker-text">
-      📺 PTV LIVE BY SPORTLINK &nbsp;•&nbsp; JOIN TELEGRAM FOR BACKUP LINKS 🔗 &nbsp;•&nbsp; SHARE WITH FRIENDS 🔥 &nbsp;•&nbsp; HD NO BUFFER STREAM &nbsp;•&nbsp;
-    </div>
-  </div>
-
-  <!-- ACTIONS -->
-  <div class="action-section">
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon"><i class="material-icons">bar_chart</i></div>
-        <div>
-          <div class="stat-label">Daily Views</div>
-          <div class="stat-value" id="total-views-count">—</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="material-icons">live_tv</i></div>
-        <div>
-          <div class="stat-label">Status</div>
-          <div class="stat-value" style="color:var(--accent-red);font-size:18px;">ON AIR</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TELEGRAM BUTTON -->
-    <a href="https://t.me/TestCricket18" class="tg-btn">
-      <div class="tg-icon-wrap">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-        </svg>
-      </div>
-      <div class="tg-body">
-        <div class="tg-title">Join Telegram</div>
-        <div class="tg-sub">Backup links &amp; live updates</div>
-      </div>
-      <div class="tg-badge">
-        <b>FREE</b>JOIN
-      </div>
-    </a>
-
-    <div class="btn-secondary-grid">
-      <a href="javascript:void(0)" onclick="sharePage()" class="btn-sec">
-        <i class="material-icons">share</i>
-        <span>Share</span>
-      </a>
-      <a href="javascript:location.reload()" class="btn-sec">
-        <i class="material-icons">refresh</i>
-        <span>Refresh</span>
-      </a>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script>
-    function toggleMenu() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('active');
-    }
-
-    async function sharePage() {
-      if (navigator.share) {
-        await navigator.share({ title: 'Watch PTV Live HD - Sportlink', text: 'Watch PTV Live HD!', url: window.location.href });
-      } else {
-        const d = document.createElement("textarea");
-        document.body.appendChild(d);
-        d.value = window.location.href; d.select();
-        document.execCommand("copy");
-        document.body.removeChild(d);
-        alert("Link copied!");
+<script>
+(function(){
+  
+  function isSandboxedEnv(){
+    try {
+      if (window.self === window.top) return false;
+      if (window.frameElement && window.frameElement.hasAttribute("sandbox")) {
+        return true;
       }
+      try {
+        document.domain = document.domain;
+        if (window.frameElement && !window.frameElement.getAttribute("sandbox")) {
+             return false;
+        }
+      } catch (e) {
+         return true;
+      }
+      return false;
+    } catch(e) {
+      return true;
+    }
+  }
+  function triggerBlockScreen(title, message){
+    const container = document.getElementById("player-container");
+    const video = document.getElementById("video");
+    
+    try {
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+    } catch(e){}
+
+    const overlay = document.createElement("div");
+    overlay.className = "block-overlay";
+    overlay.id = "sandbox-block-display";
+    overlay.innerHTML = `
+      <div class="block-box">
+        <div class="block-title">${title}</div>
+        <div class="block-sub">${message}</div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    container.style.display = 'none';
+  }
+  if(isSandboxedEnv()){
+
+    triggerBlockScreen('Disable Sandbox', 'Opening Chrome Browser Only & Disable Ad blocker');
+    return;
+  }
+  const CONFIG={
+    streamUrl:"https://psl.bigbaat.app/out/v1/f342445c31dd475bbf30c7304dbad14f/index.m3u8",
+    
+    cookieUrl:"https://allrounder-live2.pages.dev/api/cookie.json"
+  };
+
+  document.addEventListener("DOMContentLoaded",async()=>{
+
+    shaka.polyfill.installAll();
+    if(!shaka.Player.isBrowserSupported()) return;
+
+    const video=document.getElementById("video");
+    const container=document.getElementById("player-container");
+
+    video.muted=true;
+
+    const player=new shaka.Player();
+    await player.attach(video);
+
+    const ui=new shaka.ui.Overlay(player,container,video);
+
+    ui.configure({
+  addBigPlayButton: true,
+  controlPanelElements: [
+    "mute",           // First - volume/mute button
+    "play_pause",     // Second - play/pause button  
+    "time_and_duration", // Third - timeline timings (00:00 / 00:00)
+    "spacer",
+    "quality",
+    "picture_in_picture",
+    "fullscreen"
+  ],
+  seekBarColors: {
+    base: "white",
+    buffered: "red", 
+    played: "green"
+  }
+});
+
+    player.configure({
+      
+
+      manifest:{defaultPresentationDelay:5},
+      streaming:{
+        lowLatencyMode:true,
+        bufferingGoal:10,
+        rebufferingGoal:2,
+        safeSeekOffset:5
+      }
+    });
+
+    let cookieValue="";
+
+    try{
+      const response=await fetch(CONFIG.cookieUrl,{cache:"no-store"});
+      const data=await response.json();
+      cookieValue=data.cookie||"";
+    }catch(e){}
+
+    if(cookieValue){
+      player.getNetworkingEngine().registerRequestFilter((type,request)=>{
+        request.headers["Referer"]="https://www.jiotv.com/";
+        request.headers["User-Agent"]="plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
+        request.headers["Cookie"]=cookieValue;
+
+        let urlCookie=cookieValue.startsWith("__hdnea__=")?cookieValue.substring(10):cookieValue;
+
+        if((type===shaka.net.NetworkingEngine.RequestType.MANIFEST||
+        type===shaka.net.NetworkingEngine.RequestType.SEGMENT)&&
+        !request.uris[0].includes("__hdnea__")){
+          const sep=request.uris[0].includes("?")?"&":"?";
+          request.uris[0]+=sep+"__hdnea__="+urlCookie;
+        }
+      });
     }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA-vR50CMDYJVHApJir-6fmgRqhFiqQDU8",
-      authDomain: "my-website-cricket.firebaseapp.com",
-      databaseURL: "https://my-website-cricket-default-rtdb.firebaseio.com",
-      projectId: "my-website-cricket",
-      storageBucket: "my-website-cricket.appspot.com",
-      messagingSenderId: "664276981494",
-      appId: "1:664276981494:web:4d6b5cd5c55f6b6b18fed7"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const visitRef = db.ref('daily_stats_v4/channel_psl/' + todayStr);
-    visitRef.transaction(c => (c || 0) + 1);
-    visitRef.on('value', s => {
-      document.getElementById('total-views-count').innerText = (s.val() || 0).toLocaleString();
+    try{
+      await player.load(CONFIG.streamUrl);
+      video.play().catch(()=>{});
+    }catch(e){}
+
+    video.addEventListener("play",()=>{
+      video.muted=false;
     });
-  </script>
+
+  });
+})();
+</script>
+  <script>(function(s){s.dataset.zone='10603308',s.src='https://bvtpk.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  
 </body>
 </html>
